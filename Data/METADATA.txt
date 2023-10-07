@@ -1,0 +1,126 @@
+data_avgTempARM
+
+1. Year - date variable starting from 1901-2021
+2. Temp - Temperature in Celsius
+
+
+data_Mon_1901_2020
+
+1. Month - Short version of each month(Jan - Dec)
+2. Min.Temperature - Minimum Temperature in Celsius 
+3. Mean.Temperature - Average Temperature in Celsius 
+4. Max.Temperature - Maximum Temperature in  
+5. Precipitation - Precipitation in millimeters per year
+6. Years - Categorical variable for each of 3 periods: 1901-1930, 1961-1990, 1991-2020
+
+
+data_MonYVN_1950_2000 
+
+1. DATE - date variable starting from 1950-01-01 - 2000-12-01
+2. Lowest.Temp - Minimum Temperature in Celsius 
+3. Highest.Temp - Maximum Temperature in Celsius 
+4. Mean.Temp - Average Temperature in Celsius 
+5. Month - Short version of each month(Jan - Dec)
+6. Year - Year from 1950-2000
+
+
+data_TempYerevan
+
+1. Date - date variable starting from 2013-01-01 - 2022-12-01
+2. Temp - Temperature in Celsius
+3. Month - Short version of each month(Jan - Dec)
+4. Year - Year from 2013-2022
+5. Season - Categorical variable for each season type(Winter, Summer, Spring, Fall)
+
+
+joined
+
+1. Name_Eng - English name of each Armenian Marz
+2. OBJECTID - index column from 1-11
+3. MarzID - index column for each Marz
+4. MarzCenter - Name of the Marz centers
+5. Name_Arm - Armenian name of each Armenian Marz
+6. Name_Rus - Russian name of each Armenian Marz
+7. Total_Popu - Total population number
+8. Avg Temp for the last 20 years - Temperature in Celsius
+9. Avg Temp for the last 10 years - Temperature in Celsius
+10. Avg Temp for the last 5 years - Temperature in Celsius
+The remaining relevant columns are about shapefile for plotting the polygons
+
+
+joined2
+
+1. Name_Eng - English name of each Armenian Marz
+2. OBJECTID - index column from 1-11
+3. MarzID - index column for each Marz
+4. MarzCenter - Name of the Marz centers
+5. Name_Arm - Armenian name of each Armenian Marz
+6. Name_Rus - Russian name of each Armenian Marz
+7. Total_Popu - Total population number
+8. meanlast5y- Precipitation in mm/y for the last 5 years
+9. meanlast50y - Precipitation in mm/y for the last 50 years
+10. meanlast100y- Precipitation in mm/y for the last 100 years
+The remaining relevant columns are about shapefile for plotting the polygons
+
+
+arm
+
+1. OBJECTID - index column from 1-11
+2. Precipitat - Precipitation in millimeters per year 
+3. Unit - Unit of Precipitation
+The remaining relevant columns are about shapefile for plotting the polygons
+
+
+cl
+
+1. OBJECTID - index column from 1-11
+2. Descriptio - Description of the zone
+The remaining relevant columns are about shapefile for plotting the polygons
+
+
+arm_temp
+
+1. OBJECTID - index column from 1-11
+2. Temperatur - Temperature in Celsius
+The remaining relevant columns are about shapefile for plotting the polygons
+
+
+Avg_Precip
+
+1. Year - Year from 1901-2021
+2. SHIRAK - Temperature in Celsius for Shirak
+3. LORI - Temperature in Celsius for Lori
+4. TAVUSH - Temperature in Celsius for Tavush
+.
+.
+.
+12. SYUNIK - Temperature in Celsius for Syunik
+
+
+Wind_Speed_historical
+
+1. DATE - date variable starting from 1900-01-01 - 2000-12-01
+2. Temperature - Temperature in Celsius 
+3. Wind.Speed - Wind Speed in meters per second
+4. month - Numerical values for each month from 01-12
+5. year - Year from 1950-2000
+
+
+Wind_Speed_Yerevan_2016_2022
+
+1. Date.Time - date variable starting from 2016-01-01 - 2022-12-01
+2. Wind.Speed - Wind Speed in meters per second
+3. month - Numerical values for each month from 01-12
+4. year - Year from 1950-2000
+
+
+Wind_Yerevan
+
+1. Date.Time - date variable starting from 2016-01-01 - 2022-12-01
+2. ws - Wind Speed in meters per second
+3. month.x/y - Numerical values for each month from 01-12
+4. year - Year from 1950-2000
+
+
+
+

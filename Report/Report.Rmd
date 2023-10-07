@@ -1,0 +1,898 @@
+---
+title: "Analysis of Armenia's Climate"
+author: "Kristina Ghahramanyan, Aida Martirosyan, Hrach Yeghiazaryan"
+date: "2022-12-07"
+output:
+  pdf_document:
+    
+    fig_caption: yes
+    fig_height: 3.5
+    fig_width: 6
+    number_sections: yes
+    toc: yes
+  html_document:
+    df_print: paged
+    toc: yes
+  word_document:
+    toc: yes
+always_allow_html: yes
+header-includes:
+- \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(hydroTSM)
+library(dplyr)
+library(ggExtra)
+library(gridExtra)
+library(ggplot2)
+library(hydroTSM)
+library(shiny)
+library(viridis)
+library(plotly)
+library(openair)
+library(quantmod)
+library(rgdal)
+library(sf)
+library(hexbin)
+library(Rmisc)
+library(rjson)
+```
+
+\newpage
+
+# Introduction
+\vspace{10px}
+Climate is the average weather in a given area over a long period of time. 
+The concept of climate includes information about the average temperature of
+different seasons, rainfall, sunshine, etc. The main features that describe 
+climate are temperature, precipitation, wind examined over several years.
+
+Climate can affect nearly all aspects of population, including energy, food, 
+water supplies. It may have a vital impacts on different social, cultural, and 
+natural resources. Moreover, climate can have influential role for a country's 
+economy as many businesses are closely connected to weather and climate, such as
+outdoor tourism, commerce, agriculture. Therefore, it is crucial to pay great 
+attention to climate and its changes.
+
+The goal of this study is to present the overall climate of Armenia, highlight 
+the regional variations and offer some possible explanations for the changes 
+that could be observed throughout the years. The study concentrates mainly on 
+three climate indicators: Surface Level Temperature, Precipitation and Wind
+Speed.
+
+
+# Data Summary
+\vspace{10px}
+The study uses visualizations of multiple data sets about climate of Armenia 
+collected from the different sources. The main data sets are extracted from the 
+following sources:
+
+\vspace{10px}
+* WORLD BANK GROUP
+* ASIAN DEVELOPMENT BANK
+* Cosmic Ray Division of Yerevan Physics Institute
+* National Centers for Environmental Information
+
+\vspace{10px}
+The data includes information about overall climate of Armenia. The data 
+includes information from 1900s to 2022, so more than hundred years. Besides 
+most of our data is actually daily data from several stations which are located 
+in each Armenian Marz,  which helps to study yearly, monthly and seasonal trends
+in temperature, wind and precipitation changes of Armenia during last hundred 
+years. We have several data sets for each climate indicator. First, we have air 
+temperature records including: daily data, extreme values and respected 
+averages. Next, we obtained precipitation dates which includes quantity of the 
+indicator with similar dates, varying from daily and up to yearly average 
+values. Another group of data is used to explore the direction and speed of the 
+wind. We have data for the last ten years of wind variation, as well as 
+information about historical wind speed from 1950 to 2000. Overall, we have data
+about Armenia in general and also about each Marz with dates going as far as
+nearly hundred years of recorded observations. 
+
+The study uses all of these data sets to test different hypotheses. R programming 
+language is used to analyze and visualize the data. More information about the
+data's summary can be found in the metadata file.
+
+
+# Researh Methodology
+\vspace{10px}
+The research behind this project includes analysis of various scholarly 
+articles, books and report papers which are mainly published by foreign 
+organizations. The primary target of those writings is to present the challenges
+of Armenian climate and provide some forecasts about the future deviations in
+the climate, without discussing the issues connected to the sources of 
+mentioned changes. 
+Using the information gathered during the research, we have came up with 11
+hypotheses concerning specifically the overall changes in Armenian air 
+temperatures, precipitation and wind speeds. 
+
+
+
+*1. *  **Average Temperature of Armenia increased over years:**
+
+Our first hypothesis is based on the information found in the Asian World Bank
+Group report which states that average temperatures in Armenia are becoming
+higher with each year. We support that claim, because indeed, it is evident that
+over the years we no longer experience extremely cold winters.
+
+\
+
+
+*2. * **Air temperature of Armenia warms uniformly throughout the year and
+winters don’t become much colder:**
+
+Our second hypothesis comes from the same source. The researchers state that
+Armenia will have consistent warming of air across all seasons. Again, we agree
+with such claims and assume that our conclusions would back up the hypothesis.
+
+\
+
+
+*3. *  **There is no drastic variation in the extreme temperatures of Armenia:**
+
+We have considered some other climate reports by UNDP which claim that 
+temperatures all over the world would change in such way, that we will 
+experience more anomalies. Meaning that winters will become colder, summers will
+bring extreme hot air and long-lasting droughts. However, as we have never 
+saw such phenomenon in Armenia, we decided to go against the claims. We think 
+that Armenian air temperature is, indeed, becoming hotter, but it happens during
+all seasons, not only in Summer months.
+
+\
+
+
+*4. *  **Seasonal temperature increases except in spring, which could be
+connected to the fact that in spring vegetation grows, and consumes CO2:** 
+
+After reading various articles on the issue of seasonal climate changes, we 
+noticed that in Spring, usually the global temperatures do not become warmer
+at the same fast rate as they do during all the remaining months. We decided to 
+analyze the seasonal data for Armenia to find out if this phenomenon also exists
+in our country. Moreover, using other sources which discuss potential causes of
+such interesting event, we connected our hypotheses with one of the possible
+explanations.
+
+\
+
+
+*5. *  **All Armenian Marzes experience temperature increase at approximately same 
+rate:**
+
+Due to the fact that Armenia is a relatively small country we decided to check 
+if there are any variations between the temperatures in Marzes. But, as we do 
+not believe there is a significant difference, we think that the temperature 
+will be changing at the same rate throughout the whole country.
+
+\
+
+
+
+*6. *  **Precipitation decreases throughout Armenia even in the most humid
+Marzes of the region:**
+
+The UNDP report on "The Socio-EconomicImpact of Climate Change in Armenia" 
+states that precipitation for Armenia is highly variable. And their projections 
+indicate an increase in average annual precipitation. Based on those studies,
+we decided to also include the changes with precipitation in our hypothesis.
+
+\
+
+\newpage
+
+*7. * **Precipitation decrease doesn’t depend on whether the area is humid or dry.
+Eastern and Southern areas are expected to receive the least amount of 
+precipitation:**
+
+We decided to study whether Armenia has many different climate zones or not, in 
+order to understand if we have variation in quantity of precipitation depending 
+on a Marz. We believe that our country has many climatic differences because of 
+our unique location. We know that Armenian vegetation is very diverse and 
+because of that our country is rich with biodiversity. Hence, it must mean that
+Armenia includes various types of climates depending on the area. Therefore, the
+amount of precipitation should also depend on the type of specified location.
+
+\
+
+
+*8. * **In the last 100 years, there is no vital change in the
+precipitation of Armenia, but during the last 5 years, most of the regions
+experience much less precipitation:**
+
+The reports also tell us that their precipitation forecasts take into account 
+the fact that nowadays, the precipitation patterns are changing much more
+drastically then during the last century. Therefore, our hypothesis is that
+we will see more changes during the last 5 years, rather than 100.
+
+\
+
+
+*9. * **The average historical wind speed of Yerevan decreased, mostly in the 
+last decades:**
+
+Some articles claim that wind speeds are becoming more unpredictable, while 
+others say that it is definitely increasing due to abnormal weather pattern. 
+However, we decided to look only at Yerevan's wind speeds, because we read an
+article about the slowing down of wind speeds due to high rates of development
+and urbanization of countries. So, we think that Yerevan is actually 
+experiencing wind decrease rather than increase.
+
+\
+
+
+*10. * **Wind directions have changed, resulting in less directional variation:**
+
+Similarly, urbanization causes wind speed decrease as well as directional 
+limitations, resulting in highly centralized winds.
+
+\
+
+
+*11. * **The number of calm days (without wind) increased in the last couple of 
+years:**
+
+Lastly, we think that not only the speed is lowering, but also the overall
+quantity is lessening. 
+
+
+# Literature Review 
+\vspace{10px}
+After finalizing our hypotheses and gathering our results, we decided to 
+continue our research on the topic, but with a new target in mind. Our analysis 
+has yielded some quite interesting and unique 
+results, which do not always coincide with the opinions of some climate reviews.
+Hence, we began to look for possible explanations, causes and events which could
+back up our findings. 
+
+\
+
+First, let us discuss the deviation in temperatures and mention about our 
+initial hypothesis which actually opposed the information obtained from the 
+articles. As we know, climate researchers often use various models to predict 
+the possible events connected to the whether, and those predictions are based 
+on the current data. 
+
+Everything we read about temperature, was concerned with the overall warming, 
+which actually began to happen a long time ago, but the rates of change are 
+starting to become faster with each year which is actually supported by our data. 
+However, what we disagree on is connected to their fact stating that the air 
+temperature is having more anomalies and we see higher temperatures in the 
+Summer and colder ones in the Winter. Yet, our data shows a uniform warming that
+does not have any anomalies like cold snaps or heat waves.
+When we consider the precipitation, our research has mainly disagreed with the 
+specialists forecasts and overviews. Some books about Armenian climate suggested
+that we are witnessing precipitation variations: meaning some places are having
+more frequent rainfalls, while others experience droughts. But, after looking at
+the data, we saw a completely different picture. We concluded that it is 
+important to look at each Marz considering what type of climate is actually 
+there. And after analyzing the results, we saw somewhat stable precipitation 
+with minor decreases in humid Marzes.
+When we discuss the wind, our hypotheses were actually similar with those of the 
+ones mentioned in various reports. People have been saying that urbanization and
+country development slows down wind speeds, which can be easily seen on our data
+and is shown on some graphs which were made using R's libraries specifically 
+made for tracking wind speeds and directions.
+
+
+
+# Analysis
+\vspace{10px}
+```{r}
+theme_my <- theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.background = element_rect(fill = "white", size = 4, colour = "white"),
+    axis.ticks = element_line(colour = "grey70", size = 0.2),
+    panel.grid.major = element_line(colour = "grey70", size = 0.1),
+    panel.grid.minor = element_blank(),
+    panel.background = element_rect(fill = "linen")
+  )
+```
+
+## Air Temperature
+\vspace{10px}
+```{r}
+data_avgTempARM <- read.csv("Data/averageAnnualTemperature-Armenia-1901-2021.csv")
+colnames(data_avgTempARM) <- c("Year", "Temp", "X5.yr.smooth")
+data_avgTempARM$Year <- as.character(data_avgTempARM$Year)
+data_avgTempARM$Year <- as.Date(data_avgTempARM$Year, format = '%Y')
+
+ggplot(data_avgTempARM, aes(x = Year, y = Temp)) + geom_line(color = "gray") + 
+  geom_smooth(se = F, color = "#783C23") + theme_my +
+  labs(title = "Average Annual Temperature of Armenia", 
+  x = "Year", y = "Temperature (°C)") 
+```
+\vspace{10px}
+
+The above graph presents some evidence about the first Hypothesis. It shows the
+average temperature of Armenia from the year 1900 up until nowadays. From the 
+brown trend line, we can see that the temperature noticeably increased. 
+However, what is significant here, is the fact that starting from the 1980s we 
+see a much higher rates of temperature increase.  
+It is important to mention, that temperature is a crucial factor for maintaining
+stable agricultural yields and various other aspects for the country's 
+development. And even the slightest deviations could cause significant effects.
+There are various causes that are responsible for the fast growing temperatures,
+and they range from natural phenomenons to the results of human activities.
+
+```{r, fig.height = 4, fig.width = 10}
+data_MonYVN_1950_2000 <- read.csv("Data/MonthlyTemperature-Yerevan-1950-2000.csv")
+data_Mon_1901_1930 <- read.csv("Data/monthly-1901-1930-armenia.csv")
+data_Mon_1931_1960 <- read.csv("Data/monthly-1931-1960-armenia.csv")
+data_Mon_1961_1990 <- read.csv("Data/monthly-1961-1990-armenia.csv")
+data_Mon_1991_2020 <- read.csv("Data/monthly-1991-2020-armenia.csv")
+
+data_Mon_1901_1930$Years <- "1901-1930"
+data_Mon_1931_1960$Years <- "1931-1960"
+data_Mon_1961_1990$Years <- "1961-1990"
+data_Mon_1991_2020$Years <- "1991-2020"
+data_Mon_1901_2020 <- bind_rows(data_Mon_1901_1930, data_Mon_1931_1960,
+                                data_Mon_1961_1990, data_Mon_1991_2020)
+colnames(data_Mon_1901_2020)[1] <- "Month"
+
+ggplot(data_Mon_1901_2020, 
+  aes(x = Month, y = Mean.Temperature, color = Years)) +
+  geom_jitter(height = 0, width = 0.25, size = 1.5)  + theme_my +
+  labs(title = "Average Monthly Temperature of Armenia for different year intervals", 
+    x = "Months", y = "Temperature (°C)") +
+  scale_color_grey(start = 0.8, end = 0.2) +
+  scale_x_discrete(limits = month.abb) +
+  theme(plot.title = element_text(face = "bold", size=17))
+```
+
+\vspace{10px}
+
+Here we can see how the monthly temperatures for different time 
+intervals vary. The main observation is that for almost all of the months, 
+the temperatures appear to be higher for the period from 1991 to 2020. This is 
+an important finding, because there are various sources which claim that the 
+climate all over the world is changing and the winters are becoming much colder, 
+while the summers much warmer. However, in the case of Armenia, we can clearly 
+see that the air warms uniformly throughout the year. 
+
+\vspace{15px}
+
+```{r, fig.height = 4, fig.width = 8}
+data_MonYVN_1950_2000 <- read.csv("Data/MonthlyTemperature-Yerevan-1950-2000.csv")
+data_MonYVN_1950_2000$DATE <- as.character(data_MonYVN_1950_2000$DATE)
+data_MonYVN_1950_2000$DATE <- as.Date(paste0(
+  data_MonYVN_1950_2000$DATE, "-01"), format = '%Y-%m-%d')
+data_MonYVN_1950_2000 <- data_MonYVN_1950_2000 %>%
+mutate(Month = format(DATE, "%b"), Year = format(DATE, "%Y")) 
+userInp_month <- "Dec"
+
+ggplot() + labs(title = 
+    paste0("Highest and Lowest Temperature of December in Armenia"), 
+    x = "Year", y = "Temperature (°C)") +
+  geom_point(data = filter(data_MonYVN_1950_2000, Month == userInp_month) , 
+    mapping = aes(x = Year, y = Lowest.Temp, group = 1), color = "#000000") + 
+  geom_line(size = 0.8, data = filter(data_MonYVN_1950_2000, Month == userInp_month) , 
+    mapping = aes(x = Year, y = Lowest.Temp, group = 1), color = "blue") +
+  geom_point(data = filter(data_MonYVN_1950_2000, Month == userInp_month) , 
+    mapping = aes(x = Year, y = Highest.Temp, group = 1), color = "#000000") + 
+  geom_line(size = 0.8, data = filter(data_MonYVN_1950_2000, Month == userInp_month) , 
+    mapping = aes(x = Year, y = Highest.Temp, group = 1), color = "brown") +
+  theme(axis.text.x = element_text(angle = 90)) + theme_my +
+    scale_x_discrete(breaks = seq(1950, 2000, 5)) +
+  geom_smooth(size = 0.8, colour="#003c30",data = filter(data_MonYVN_1950_2000,
+                                                         Month == userInp_month) , 
+    mapping = aes(x = Year, y = Lowest.Temp, group = 1), span = 0.4, se = FALSE) +
+  geom_smooth(size = 0.8, colour="#003c30",data = filter(data_MonYVN_1950_2000,
+                                                         Month == userInp_month) , 
+    mapping = aes(x = Year, y = Highest.Temp, group = 1), span = 0.4, se = FALSE)
+```
+
+\vspace{10px}
+
+The above graph highlights an evidence about the third Hypothesis.
+Some studied articles say that nowadays, the climate is 
+witnessing more anomalies and as the years pass, we should see more and more 
+variation in the extreme temperatures. However, this graph shows us that the 
+maximum and minimum temperatures over the past 50 years do not change 
+drastically. Even though we do see some anomalies (in 1953, 1982, 1998), the 
+trend line remains consistent. There is an increase in temperatures if we 
+compare the values in 1950 and 2000, but no major changes in extremes can be 
+witnessed.
+
+```{r, fig.height= 10, fig.width=20}
+data_TempYerevan <- read.csv("Data/outsideTemperature-Yerevan-2013-2022.csv")
+colnames(data_TempYerevan) <- c("Date", "Temp")
+data_TempYerevan <- na.omit(data_TempYerevan)
+data_TempYerevan$Date <- as.Date(data_TempYerevan$Date,
+                                 format = '%d-%b-%y %H:%M:%S')
+data_TempYerevan <- data_TempYerevan %>%
+mutate(Month = format(Date, "%b"), Year = format(Date, "%Y")) 
+data_TempYerevan$Season <- time2season(data_TempYerevan$Date,out.fmt = "seasons")
+data_TempYerevan$Temp[data_TempYerevan$Temp > 80] <- 20
+data_TempYerevan$Season[data_TempYerevan$Season == 'autumm'] <- "Fall"
+data_TempYerevan$Season[data_TempYerevan$Season == 'spring'] <- "Spring"
+data_TempYerevan$Season[data_TempYerevan$Season == 'summer'] <- "Summer"
+data_TempYerevan$Season[data_TempYerevan$Season == 'winter'] <- "Winter"
+
+Year <- c(2013:2022)
+MeanTemp_fall <- c()
+MeanTemp_spring <- c()
+MeanTemp_summer <- c()
+MeanTemp_winter <- c()
+
+for(i in 2013:2022){
+
+  m_fall <- mean(data_TempYerevan$Temp[data_TempYerevan$Season == "Fall" & 
+                                    data_TempYerevan$Year == as.character(i)])
+  MeanTemp_fall <- append(MeanTemp_fall, m_fall)
+  m_spring <- mean(data_TempYerevan$Temp[data_TempYerevan$Season == "Spring" & 
+                                    data_TempYerevan$Year == as.character(i)])
+  MeanTemp_spring <- append(MeanTemp_spring, m_spring)
+  m_summer <- mean(data_TempYerevan$Temp[data_TempYerevan$Season == "Summer" & 
+                                    data_TempYerevan$Year == as.character(i)])
+  MeanTemp_summer <- append(MeanTemp_summer, m_summer)
+  m_winter <- mean(data_TempYerevan$Temp[data_TempYerevan$Season == "Winter" & 
+                                    data_TempYerevan$Year == as.character(i)])
+  MeanTemp_winter <- append(MeanTemp_winter, m_winter)
+}
+
+data_seasonal <- data.frame(Year, MeanTemp_fall, MeanTemp_spring, 
+                            MeanTemp_summer, MeanTemp_winter)
+
+p1 <- ggplot(data_seasonal, aes(x = Year, y = MeanTemp_fall)) +
+  labs(title = "Average Fall Temperature of Yerevan", 
+      x = "Year", y = "Temperature (°C)") + theme(text = element_text(size = 20))  +
+  geom_smooth(color = "#783C23") + theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_continuous(breaks=seq(2013,2022,1)) + theme_my +
+  theme(plot.title = element_text(face = "bold", size=24))
+
+p2 <- ggplot(data_seasonal, aes(x = Year, y = MeanTemp_spring)) +
+  labs(title = "Average Spring Temperature of Yerevan", 
+      x = "Year", y = "Temperature (°C)") + theme(text = element_text(size = 20))  +
+  geom_smooth(color = "#783C23") + theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_continuous(breaks=seq(2013,2022,1)) + theme_my +
+  theme(plot.title = element_text(face = "bold", size=24))
+
+p3 <- ggplot(data_seasonal, aes(x = Year, y = MeanTemp_summer)) +
+  labs(title = "Average Summer Temperature of Yerevan", 
+      x = "Year", y = "Temperature (°C)") + theme(text = element_text(size = 20))  +
+  geom_smooth(color = "#783C23") + theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_continuous(breaks=seq(2013,2022,1)) + theme_my +
+  theme(plot.title = element_text(face = "bold", size=24))
+
+p4 <- ggplot(data_seasonal, aes(x = Year, y = MeanTemp_winter)) +
+  labs(title = "Average Winter Temperature of Yerevan", 
+      x = "Year", y = "Temperature (°C)") + theme(text = element_text(size = 20))  +
+  geom_smooth(color = "#783C23") + theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_continuous(breaks=seq(2013,2022,1)) + theme_my +
+  theme(plot.title = element_text(face = "bold", size=24))
+
+ grid.arrange(p1, p2, p3, p4, nrow=2)
+```
+
+\vspace{8px}
+
+With those graphs, we wanted to show the average seasonal temperatures in Yerevan
+and try to explain some of the variations that could be seen.
+If we look at the graphs for the Fall, Summer and Winter, we can see a 
+noticeable increase from the year 2013. However, when we look at the Spring 
+season, we see an opposite picture. This is a very important observation which 
+has various explanations. Both the natural environment and 
+the human activities have an effect on the air temperature. For instance, the 
+fact that the Sun spots, which are areas on the sun that release much more heat, 
+are becoming more frequent - is a proved natural phenomenon that increases the 
+temperature all over the Earth. 
+Besides that, human activities ranging from transportation to industrial 
+factories also cause warming due to the release of gases like 
+CO2(carbon dioxide). And the cooling in Spring can be directly correlated to the
+fact that during Spring months, trees and the vegetation begin to grow and they
+consume the CO2. And we read that in Yerevan, after 2013 the tree cover has 
+actually been increasing, which could possibly cause this temperature decrease.
+
+
+```{r, fig.height = 5, fig.width = 6}
+avgmarz <-readxl::read_xlsx("Data/Data_By_Marzes/Average_Temperature.xlsx") 
+avgmarz$`Avg Temp for the last 20 years` <- 
+  (avgmarz$`Avg Temp for the last 20 years` - 32) * 5/9
+
+avgmarz$`Avg Temp for the last 10 years` <- 
+  (avgmarz$`Avg Temp for the last 10 years` - 32) * 5/9
+
+avgmarz$`Avg Temp for the last 5 years` <- 
+  (avgmarz$`Avg Temp for the last 5 years` - 32) * 5/9
+
+marz <- st_read('Data/GIS/Armenia_Marzes/Armenia_Marzes.shp', quiet = T)
+
+joined <- merge(marz, avgmarz, by.x="Name_Eng", by.y="Marz")
+
+mid <- mean(c(joined$`Avg Temp for the last 20 years`, 
+            joined$`Avg Temp for the last 10 years`, 
+            joined$`Avg Temp for the last 5 years`))
+
+x2 <- ggplot(data = joined, aes(fill = `Avg Temp for the last 5 years`)) + 
+  geom_sf() + 
+  scale_fill_gradient2(midpoint = mid, low = "navyblue", mid = "white",
+                       high = "red1", space = "Lab",limits=c(-15, -9)) +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(),
+        panel.background = element_blank()) +
+  labs(title = "Average Temperature during Last 5 Years",
+       fill = "Temperature (°C)") + theme(legend.title = element_text(size=8)) +
+  theme(plot.title = element_text(face = "bold", size=10))
+
+x1 <- ggplot(data = joined, aes(fill = `Avg Temp for the last 20 years`)) + 
+  geom_sf() + 
+  scale_fill_gradient2(midpoint = mid, low = "navyblue", mid = "white",
+                       high = "red1", space = "Lab",limits=c(-15, -9)) +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), 
+        panel.background = element_blank()) +
+  labs(title = "Average Temperature during Last 20 Years",
+       fill = "Temperature (°C)") + theme(legend.title = element_text(size=8)) +
+  theme(plot.title = element_text(face = "bold", size=10))
+
+multiplot(x1,x2, cols=2)
+```
+
+
+Above we have two Armenia map graphs. The left one shows last 20 years average 
+temperatures. We can see that the regions with purple color include rather dark 
+coloring, which means the temperature in those locations is rather cold. 
+Comparably, the graph on the right shows last 5 years changes and here the 
+previous dark purple regions become more light, which proves that during years 
+all cold regions became less colder. In the same way, the regions with red color, 
+became more red in case of last 5 years graph, which again highlights the 
+temperature increase in all regions of Armenia. So, the two map comparison 
+help to see that all Armenian regions experience temperature increase at 
+approximately same rate.
+
+
+## Precipitation
+
+\vspace{10px}
+
+```{r}
+avgprecip <- readxl::read_xlsx("Data/Data_By_Marzes/Average_Precipitation.xlsx")
+Avg_Precip <- readxl::read_xlsx("Data/Data_By_Marzes/Average_Precipitation_Transposed.xlsx")
+arm_temp <- readOGR('Data/GIS/Temperature', verbose = FALSE)
+arm_temp <- st_read('Data/GIS/Temperature/Temperature.shp', quiet = T)
+cl <- readOGR('Data/GIS/Climate_Zones', verbose = FALSE)
+cl <- st_read('Data/GIS/Climate_Zones/Climate_Zones.shp', quiet = T)
+arm <- readOGR('Data/GIS/Precipitation', verbose = FALSE)
+arm <- st_read('Data/GIS/Precipitation/Precipitation.shp', quiet = T)
+marz <- st_read('Data/GIS/Armenia_Marzes/Armenia_Marzes.shp', quiet = T)
+```
+
+
+```{r, fig.height = 12, fig.width = 15}
+y1 <- ggplot(data = arm_temp, aes(fill = factor(Temperatur))) + 
+  geom_sf() +
+  labs(fill = "Temperature (°C)") +
+  scale_fill_brewer(palette = "Spectral", direction = -1) +
+  labs(title = "Average Historical Temperatures in Armenia") +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), 
+        panel.background = element_blank()) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+   theme(legend.key.size = unit(0.6, 'cm'),
+        legend.key.height = unit(0.6, 'cm'), 
+        legend.key.width = unit(0.6, 'cm') ) +
+  theme(plot.title = element_text(face = "bold", size=20))
+
+y2 <- ggplot(data = arm, aes(fill = Precipitat)) +
+ geom_sf() +
+ labs(fill = "Precipitation (mm/year)", 
+      title = "Average Historical Precipitation In Armenia") +
+ theme(axis.text = element_blank(), axis.ticks = element_blank(), 
+       panel.background = element_blank())+
+ scale_fill_continuous(high = "#132B43", low = "#56B1F7") +
+     theme(legend.key.size = unit(1, 'cm'),
+        legend.key.height = unit(1, 'cm'), 
+        legend.key.width = unit(1, 'cm') ) +
+  theme(plot.title = element_text(face = "bold", size=20))
+  
+
+grid.arrange(y1, y2, ncol=2)
+```
+
+\vspace{20px}
+\begin{center} \bfseries Climate Zones of Armenia \end{center}
+
+```{r, fig.height = 5, fig.width = 14}
+ggplot(data = cl, aes(fill = Descriptio)) + 
+  geom_sf() + 
+  labs(fill = "Zone Description") +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), 
+        panel.background = element_blank()) + scale_fill_manual(values = c("#B1533C","#C4633E","#D67C56","#E1B047","#F5D68F","#F5E5BC",   "#D7E3CA","#B7DFE8","#5DB3D4","#289EC4")) +
+       theme(legend.key.size = unit(0.7, 'cm'),
+        legend.key.height = unit(0.7, 'cm'), 
+        legend.key.width = unit(0.7, 'cm') )
+```
+
+\vspace{10px}
+
+Next, we wanted to analyze the precipitation data. However, in order to do that,
+we first need to understand where in Armenia we can see different climate zones. 
+Because precipitation varies much more than temperature (the scale is diverse: 
+from 100 millimeters up to 1000), it is important to understand what is the 
+current type of climate in each Marz. So, on the Climate Zones map, we can see 
+that Armenia has 10 different climate zones, and most Marzes include many of 
+them. We can see that arid areas have much higher average temperature and much 
+lower average precipitation compared to more humid and moderate areas. 
+Therefore, we can see 3 completely different maps with separate border lines, 
+but the combination of those two actually produces this map of zones which 
+allows us to know which Marzes actually have fewer climate variation. So now, 
+we know that to compare precipitation, we must look at Marzes like Armavir and 
+Gegharqunik vs Shirak and Lori because they have completely opposite and less 
+varying climate zones.
+
+```{r, fig.height = 5, fig.width = 10}
+m1 <- ggplot(Avg_Precip, aes(x = Year, y = ARMAVIR)) +
+  geom_line(color = "#6699cc", size = 1) +
+  geom_smooth(color ="#5F1415",span = 0.5, se = FALSE) +
+  labs(title = "Precipitation in Armavir Marz", x = "Date", y = "Precipitation") +
+  theme_my 
+m2 <- ggplot(Avg_Precip, aes(x = Year, y = LORI)) +
+  geom_line(color = "#6699cc", size = 1) +
+  geom_smooth(color ="#5F1415", span = 0.5, se = FALSE) +
+  labs(title = "Precipitation in Lori Marz", x = "Date", y = "Precipitation") +
+  theme_my
+
+grid.arrange(m1, m2, nrow=2)
+```
+
+\vspace{10px}
+
+Now, if we analyze the data from each Marz, we can see that more humid Marzes 
+experience somewhat of a decrease in precipitation, while hotter places have 
+almost no major variation since 1900 up until now. However, if we look at places
+like Syunik, we cannot obtain a lot of valuable information because Syunik is a 
+very diverse region.
+Here is the graph of the average precipitation in Armavir from 1900 to nowadays.
+It shows us that Armavir sees very little precipitation (only about 400 mm/y) 
+and that over the years, the value actually stayed stable. 
+If we compare it to Lori precipitation, we see that the value has actually gone 
+down, but the overall precipitation is much higher. Those findings suggest that
+instead of variation in precipitation all over Armenia, we see a completely 
+different picture. Out graphs show that precipitation in humid Marzes of 
+Armenia, where the precipitation is already quite high, the value actually 
+decreased over the years. Nonetheless, arid and hot Marzes do not see any 
+variation or decrease,and their precipitation has not been changing over the 
+years.
+
+\vspace{15px}
+
+```{r, fig.height= 10, fig.width=12}
+
+avgprecip$meanlast5y <- rowMeans(avgprecip[,118:122])
+
+avgprecip$meanlast50y <- rowMeans(avgprecip[,73:122])
+
+avgprecip$meanlast100y <- rowMeans(avgprecip[,23:122])
+
+
+joined2 <- merge(marz, avgprecip, by.x="Name_Eng", by.y="Marz")
+
+
+z1 <- ggplot(data = joined2, aes(fill = `meanlast5y`)) + 
+  geom_sf() + 
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), 
+        panel.background = element_blank()) +
+  scale_fill_gradient2(limits=c(50, 650)) +
+  labs(title = "Average Precipitation during Last 5 Years", 
+       fill ="Precipitation (mm/year)") +
+  theme(plot.title = element_text(face = "bold", size=14))
+
+z2 <- ggplot(data = joined2, aes(fill = `meanlast100y`)) + 
+  geom_sf() + 
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), 
+        panel.background = element_blank()) +
+  scale_fill_gradient2(limits=c(50, 650)) +
+  labs(title = "Average Precipitation during Last 100 Years", 
+       fill ="Precipitation (mm/year)") +
+  theme(plot.title = element_text(face = "bold", size=14))
+
+multiplot(z2, z1, cols=2)
+```
+
+\vspace{10px}
+
+Moreover, we also wanted to show you how the average yearly amounts of 
+precipitation have changed. From the map of the last 100 years we see a darker 
+colored map with average value around 600 millimeter. However as we switch to 
+the last 5 years, the colors became somewhat lighter, with average value around 
+450 millimeter.
+
+## Wind
+\vspace{10px}
+
+```{r}
+Wind_Direction_Yeravan_2016_2022 <- read.csv("Data/wind_direction_Yerevan.csv")
+Wind_Speed_Yerevan_2016_2022 <- read.csv("Data/Yerevan_Wind_2016-2022.csv")
+Wind_Speed_historical <- read.csv("Data/Yerevan_Wind_1950-2000.csv")
+```
+
+```{r, fig.height = 4, fig.width = 10}
+Wind_Speed_historical$DATE <- 
+  as.Date(Wind_Speed_historical$DATE, origin = "1-Jan-1950", format = '%d-%b-%Y')
+Wind_Speed_historical <- Wind_Speed_historical %>%
+mutate(month = format(DATE, "%m"), year = format(DATE, "%Y")) %>%
+group_by(month, year) 
+Wind_Speed_historical <- filter(Wind_Speed_historical, Wind.Speed <= 50)
+
+ggplot(Wind_Speed_historical, aes(y=Wind.Speed, x=DATE)) +
+    geom_line(color = "#177F97", size = 0.5) +
+    stat_smooth(colour="#ffff33") +
+    theme_my +
+    scale_y_continuous(breaks = seq(0, 30, by = 2.5))+
+    labs(title = "Historical Daily Wind Speeds of Yerevan", 
+         y = "Wind Speed (m/s)", x = "Date")
+```
+
+\vspace{10px}
+
+The above graph presents the historical Wind speed map of Yerevan, we can see 
+the trend line, which suggests that the average speed is around 2.5 meters/second 
+before 1980 and around 5 after. We cannot know for sure what the speed was 
+before 1980 because the data is a result of various models, but for our further 
+findings, it does not play a major role. The main observation here is that the 
+average speeds never went down below 2.5. 
+
+\vspace{10px}
+
+```{r, fig.height = 4, fig.width = 10}
+colnames(Wind_Direction_Yeravan_2016_2022)[which(
+  names(Wind_Direction_Yeravan_2016_2022) == "Wind.Direction")] <- "wd"
+Wind_Direction_Yeravan_2016_2022$Date.Time <- 
+  as.Date(Wind_Direction_Yeravan_2016_2022$Date.Time, origin = "02-Dec-19 03:51:00", 
+          format = '%d-%b-%y %H:%M:%S')
+Wind_Direction_Yeravan_2016_2022 <- Wind_Direction_Yeravan_2016_2022 %>%
+mutate(month = format(Date.Time, "%m"), year = format(Date.Time, "%Y")) %>%
+group_by(month, year) 
+
+Wind_Speed_Yerevan_2016_2022$Date.Time <- 
+  as.Date(Wind_Speed_Yerevan_2016_2022$Date.Time, origin = "5-14-14 3:35 AM", 
+          format = '%m-%d-%y %I:%M %p')
+
+Wind_Speed_Yerevan_2016_2022 <- Wind_Speed_Yerevan_2016_2022 %>%
+mutate(month = format(Date.Time, "%m"), year = format(Date.Time, "%Y")) %>%
+group_by(month, year) 
+
+Wind_Yerevan <- inner_join(y = Wind_Direction_Yeravan_2016_2022, 
+                           x = Wind_Speed_Yerevan_2016_2022, by = "Date.Time")
+colnames(Wind_Yerevan)[which(names(Wind_Yerevan) == "Wind.Speed")] <- "ws"
+
+ggplot(Wind_Speed_Yerevan_2016_2022, aes(y=Wind.Speed, x=Date.Time)) +
+    geom_line(color = "#44aa99", size = 0.5) +
+    stat_smooth(colour="#ffff33") +
+    theme_my +
+    scale_y_continuous(limits = c(0, 27.5), breaks = seq(0, 30, by = 2.5)) +
+    labs(title = "Daily Wind Speeds of Yerevan", y = "Wind Speed (m/s)", x = "Date")
+```
+
+\vspace{10px}
+
+However, on this graph, we see a significant dip in wind speed after 2016, 
+reaching as low as 1 meter/second. As we do not see such phenomenon with wind 
+before 2000s, we decided to concentrate only on the last decade and show
+the sudden deviations for this climate indicator. There are various possible 
+explanations for such findings and the main one is related to urbanization. 
+We believe that the speeds could have been significantly affected by the new 
+high-storied buildings. Furthermore, we know that before 2000s the main type of
+apartments in Armenia included 5-10 storied buildings with majority not 
+exceeding above 5 stories. However, as our economy is beginning to grow at 
+faster rates, and most of the Soviet time buildings are either too weak to 
+withstand earthquakes or too old to consider any renovations, we see a major
+increase in the number of the newly built apartments. We know that still, the
+industry is growing and more buildings are being built, and we believe that 
+Yerevan's wind speeds will continue to decrease further on.
+
+\newpage
+\begin{center} \bfseries Wind Speed and Direction in Yerevan \end{center}
+\vspace{6px}
+```{r, fig.height = 7, fig.width = 4}
+polarFreq(Wind_Yerevan[which(Wind_Yerevan$year.x == 2016),], wd.nint = 12, 
+          offset =4, ws.int = 1,
+          grid.line = 3, type = "year.x", main = "", 
+          key.header = "Frequency", key.position = "right")
+
+polarFreq(Wind_Yerevan[which(Wind_Yerevan$year.x == 2022),], wd.nint = 12, ws.int = 1,
+          offset =4, grid.line = 3, type = "year.x", ws.upper = 10, 
+          main = "", key.header = "Frequency",
+          key.position = "right")
+```
+
+\vspace{10px}
+
+The following graphs show the comparison between the wind speed and direction in
+2016 and 2022. We see that in 2016, we have observations almost for all the 
+directions while in 2022 the wind in centralized in 2 main directions.
+Moreover, we see that most of the values for 2016 reach 12m/s while in 2022 
+the speed was mainly below 9 and even 6 m/s.
+
+\vspace{10px}
+\begin{center} \bfseries Amount of Wind by Direction in Yerevan \end{center}
+\vspace{6px}
+```{r, fig.height = 7, fig.width = 3.8}
+windRose(Wind_Yerevan[which(Wind_Yerevan$year.x == 2016),],key.position = "right",
+         type ="year.x", width = 1.5,  
+         paddle = FALSE, max.freq = 40,
+         key.footer = "Speed", annotate = FALSE )
+
+windRose(Wind_Yerevan[which(Wind_Yerevan$year.x == 2022),],key.position = "right",
+         type ="year.x", width = 1.5, 
+         paddle = FALSE, max.freq = 40,
+         key.footer = "Speed", annotate = FALSE)
+```
+
+\vspace{10px}
+
+In those graphs we see the amount of wind for the same years. The main 
+observation is that we see more extreme values for the year 2016 and while 48% 
+of the days in 2016 were calm, in 2022 the value reaches 79%. Lastly, the mean 
+wind speed for 2016 is 1.9 m/s and for 2022 it is 0.7 m/s.
+
+The results of all analyses are deployed and available on the Internet. To view
+the app use the link https://krgh.shinyapps.io/Group_Project/, where you can 
+interactively change the graphs to see your desired visualizations.
+
+# Conclusion
+
+To conclude our analysis, we can say that our work has shown to agree with some
+of the hypotheses taken from climate research papers, however, we also notice
+some significant differences between some of the statements in those books and
+our graphs. 
+
+It is evident that the results about temperature increase mainly 
+coincide with the findings. Our graphs show that the average temperature in 
+Armenia has been increasing at much faster rates during the last decades. 
+Yet, some researches suggested that winter climate in Armenia will be much 
+colder, while summers will bring extreme temperature rises. This hypothesis is 
+actually opposed by us because our analysis shows no such phenomenon in Armenia.
+On the contrary, we see results which show uniform warming in the country, 
+without any unexpected anomalies. 
+
+Furthermore, our findings about seasonal temperature 
+changes are actually quite unique, with evident decrease during Spring months.
+To back up our result, further research yielded some possible causes of Spring
+cooling connected to the fact that CO2 levels decrease due to vegetation growth.
+Such statements were concluded due to the fact that the relationship between CO2
+and air temperature has been proven to exist. Moreover, we looked at information
+about forest covers in Yerevan, and show that from 2013, we actually plant more 
+trees than cut them, resulting in net positive. 
+
+Moving forward, we can discuss the hypothesis about the precipitation 
+variability in Armenia. Before preforming our analysis, we read that, in the 
+future decades, the precipitation in Armenia will change drastically and 
+unexpectedly. However, after looking at the data, we see that only humid Marzes
+actually experience any change in precipitation connected to the slow decrease.
+The remaining, hotter places like Armavir or Aragatsotn do not show changes
+at all, their rainfalls are staying stable as the years pass. 
+
+Last but not least, we have the analysis of wind speeds and directions. We 
+decided to specifically take into account the data from Yerevan to focus on one
+place and be able to find some causes for possible variations. Our hypothesis on
+this indicator mainly came from some foreign articles about the situation in
+other countries because there was almost no information on wind analysis from 
+Armenian sources. After our work, we were able to conclude that wind speeds in
+Yerevan are decreasing due to some factors like urbanization. Moreover, we saw 
+that wind direction is also becoming less and less diverse, with more or less
+centralized winds occurring in the last couple years.
+
+Overall, we see that some articles have been suggesting quite reliable 
+information about the climate changes in Armenia, however some of them tend to
+make the forecasts too extreme or too over dramatized, which could be rather
+misleading. We believe that it is important to follow such changes and try
+to do everything to mitigate their damaging outcomes, but if we do not have
+precise foundation to build upon, we would not be able to concentrate on the
+more important issues that could require our immediate attention.
+
+# Sources
+
+* World Bank Group. *Climate Change Knowledge Portal*. (2021). Retrieved from: https://climateknowledgeportal.worldbank.org/country/armenia/climate-data-historical
+* UNDP. *The Socio-Economic Impact of Climate Change in Armenia*. (2013). Retrieved from: https://www.undp.org/armenia/publications/socio-economic-impact-climate-change-armenia?fbclid=IwAR2h8nLuS8Yz6mhz02RH4NtzJDEsDYgPjDSLezrtMm2s91U8vU5c_QMpSZU
+* Asian Development Bank. *Climate Risk Country Profile: Armenia*. (2021). Retrieved from: https://www.adb.org/publications/climate-risk-country-profile-armenia?fbclid=IwAR0yj91VU2LvCtOqK0Dt5SPHelcF0N1bXFRGAdt72O_ToZ79PDTMjNhzmZg
+* National Centers for Environmental Information. *Global Climate Station Summaries*. (1900-2022). Retrieved from: https://www.ncei.noaa.gov/maps/global-summaries/?fbclid=IwAR0JRB6wetuUB4FQExhmVKWJvtbnavx-wNDaqSpL6OGKBIZCPUj47tOXbiM
+* National Centers for Environmental Information. *All Observational Times Data*. (1900-2022). Retrieved from: https://www.ncei.noaa.gov/maps/alltimes/?fbclid=IwAR2bgQwi2Ab4EFXHUAzxPrchWG83RBucevhVzhuU-WXNNsrrnQnlcvYt6OU
+
+
+
+
+
+
+
+
+
+
